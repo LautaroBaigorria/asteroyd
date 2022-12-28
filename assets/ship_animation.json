@@ -1,0 +1,83 @@
+{
+	"textures": [
+		{
+			"image": "ship_animation.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 1446,
+				"h": 482
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "ship_idle.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 480,
+						"h": 480
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 480,
+						"h": 480
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 480,
+						"h": 480
+					}
+				},
+				{
+					"filename": "ship_thrust1.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 480,
+						"h": 480
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 480,
+						"h": 480
+					},
+					"frame": {
+						"x": 483,
+						"y": 1,
+						"w": 480,
+						"h": 480
+					}
+				},
+				{
+					"filename": "ship_thrust2.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 480,
+						"h": 480
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 480,
+						"h": 480
+					},
+					"frame": {
+						"x": 965,
+						"y": 1,
+						"w": 480,
+						"h": 480
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:ed83fc6cd7df089e8a630fbce98525e7:296be18bb928725cc5448f5f5ecc6127:e011c2ec9e0f011511bac3fbe2fae2b9$"
+	}
+}
