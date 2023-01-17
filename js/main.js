@@ -15,13 +15,28 @@
 //  class Asteroid extend Phaser.Physics.Arcade.Sprite
 //  class AsteroidS extend Phaser.Physics.Arcade.Group
 //  disparo con problemas : consultar en internet <---HECHO--->
-//  multiples escenas (creditos, menu principal, juego)
-//  resolver modelo de colision para asteroidM << IMPORTANTE >>
+//  multiples escenas (creditos, menu principal, juego, game over)
 //  el tama;o de ventana debe ser tama;o del dispositivo - 5px (window.innerHeight -5)
 //  separar el codigo en archivos <---HECHO--->
 //  version para escritorio  
 //  version para moviles 
 //  despliegue en un sitio web 
+
+//  resolver modelo de colision para asteroidM << IMPORTANTE >>
+//  1- crear grupo con los flags apagados y la cantidad total de asteroidsm(8)
+//  2- pasar como argumento (x, y) del asteoride destruido y key='asteroidm'
+//  3- setear true en todos sus flags
+//  4- fijar movimiento velocidad y rotacion aleatorios
+//  fire (x, y)
+// {
+//     this.body.reset(x, y);
+//     this.setActive(true);
+//     this.setVisible(true);
+//     
+// }
+// ver codigo completo en https://phaser.io/examples/v3/view/physics/arcade/bullets-group
+// agregar modelo de colision a los asteroidesm y un reseteo de grupo para que el spawn se vuelva a repetir en waves posteriores
+
 
 import {Asteroids} from './asteroids.js';
 import {AsteroidsM} from './asteroidsm.js';
@@ -52,6 +67,7 @@ preload ()
 
     this.loadImages()
     this.loadKeys()
+    this.loadAudio()
 
 
 }
@@ -68,6 +84,11 @@ create ()
     this.addColliders()
     this.addTexts()
     this.addAnimations()
+    let soundtrack = this.sound.add('soundtrack');
+
+        soundtrack.play({
+            loop: true
+        });
 
     
 }
@@ -80,7 +101,6 @@ update (time)
     this.physics.world.wrap(this.player, 32);
     this.physics.world.wrap(this.asteroids, 32);
     this.asteroids.asteroidRotation()
-    // this.physics.world.wrap(this.bullets, 32) //regular duracion
 
 }
 
@@ -90,7 +110,6 @@ update (time)
 loadImages()
     {
     this.load.image('nightsky','assets/sky.png')
-    // this.load.image('ship','assets/ship.png')
     this.load.image('asteroid','assets/asteroid.png')
     this.load.image('asteroid2','assets/asteroid2.png')
     this.load.image('bullet','assets/bullet.png')
@@ -106,6 +125,10 @@ loadKeys()
     this.shift = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
     }
 
+loadAudio()
+    {
+        this.load.audio('soundtrack','assets/1-Supercollider.mp3')
+    }
 
 addPlayer()
     {
@@ -129,20 +152,20 @@ addColliders()
                 player.setX(this.screenWidth/2);
                 player.setY(this.screenHeight/2);
                 player.setActive(true).setVisible(true)
-              }, 1000)
+            }, 1000)
         },null,this)
     
         this.physics.add.collider(this.asteroids, this.asteroids)
 
         this.physics.add.collider(this.asteroids, this.bullets, (asteroid,bullet)=>{
             asteroid.destroy()
+            this.asteroidsm.addAsteroids(asteroid.x, asteroid.y,2);
             bullet.setActive(false);
             bullet.setVisible(false);
             bullet.body.enable = false
             console.log(asteroid.x)
             console.log(asteroid.y)
 
-            this.asteroidsm.addAsteroids(asteroid.x,asteroid.y)
             this.score+=50
             if (this.asteroids.getLength()==0) {
                 setTimeout(() => {
@@ -271,7 +294,7 @@ const config = {
         },
         debug: true
     },
-    scene: Game
+    scene: [Game]
 }
 
 const game = new Phaser.Game(config)

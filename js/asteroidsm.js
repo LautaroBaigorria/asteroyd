@@ -6,10 +6,10 @@ export class AsteroidsM extends Phaser.Physics.Arcade.Group
         super(scene.physics.world, scene);
 
         this.createMultiple({
-            frameQuantity: 2,
+            frameQuantity: 8,
             key: 'asteroid2',
-            active: true,
-            visible: true,
+            active: false,
+            visible: false,
             classType: AsteroidM
         });
     }
@@ -17,21 +17,29 @@ export class AsteroidsM extends Phaser.Physics.Arcade.Group
     resetAsteroidGroup()
     {
         this.createMultiple({
-            frameQuantity: 2,
+            frameQuantity: 8,
             key: 'asteroid2',
-            active: true,
-            visible: true,
+            active: false,
+            visible: false,
             classType: AsteroidM
         });
 
     }
 
-    addAsteroids(screenWidth,screenHeight)
+    addAsteroids(posX,posY,quantity)
     {
-        this.children.each((asteroid) => {
-            asteroid.asteroidLocation(screenWidth,screenHeight)
-            asteroid.asteroidMovement()
-        }, this);
+        
+        
+        for (let i=quantity;  i >0  ; i--) 
+        {
+            let asteroidm = this.getFirstDead(false);
+            if (asteroidm)
+            {
+                asteroidm.spawn(posX, posY);
+            }
+            
+        }
+        
     }
 
     asteroidRotation()

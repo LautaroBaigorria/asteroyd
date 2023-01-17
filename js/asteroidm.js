@@ -3,20 +3,19 @@ export class AsteroidM extends Phaser.Physics.Arcade.Sprite
     constructor (scene, x, y)
     {
         super(scene, x, y, 'asteroid2');
-        this.enable = true
-        this.setActive(true);
-        this.setVisible(true);
+        this.enable = false
+        this.setActive(false);
+        this.setVisible(false);
         this.x = 0
         this.y = 0
     }
 
-    asteroidLocation(x,y)
+    spawn(x,y)
     {
-            this.x = x
-            this.y = y
-            const body = this.body
-            body.updateFromGameObject()     
-        
+        this.body.reset(x, y);
+        this.setActive(true);
+        this.setVisible(true);
+        this.asteroidMovement();
     }
 
     asteroidMovement()
