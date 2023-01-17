@@ -16,6 +16,8 @@ export class AsteroidM extends Phaser.Physics.Arcade.Sprite
         this.setActive(true);
         this.setVisible(true);
         this.asteroidMovement();
+        const body = this.body
+        body.updateFromGameObject()   
     }
 
     asteroidMovement()

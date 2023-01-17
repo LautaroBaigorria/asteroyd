@@ -85,6 +85,7 @@ create ()
     this.addTexts()
     this.addAnimations()
     let soundtrack = this.sound.add('soundtrack');
+    this.laserSmall = this.sound.add('laserSmall')
 
         soundtrack.play({
             loop: true
@@ -100,6 +101,7 @@ update (time)
     this.updateTexts()
     this.physics.world.wrap(this.player, 32);
     this.physics.world.wrap(this.asteroids, 32);
+    this.physics.world.wrap(this.asteroidsm, 32);
     this.asteroids.asteroidRotation()
 
 }
@@ -128,6 +130,7 @@ loadKeys()
 loadAudio()
     {
         this.load.audio('soundtrack','assets/1-Supercollider.mp3')
+        this.load.audio('laserSmall', 'assets/laserSmall_002.ogg');
     }
 
 addPlayer()
@@ -155,7 +158,24 @@ addColliders()
             }, 1000)
         },null,this)
     
+        this.physics.add.collider(this.player, this.asteroidsm, (player)=> {
+            player.setActive(false).setVisible(false)
+            this.lives -= 1
+            if (this.lives==0) {
+                this.gameOver = true
+            }
+            setTimeout(()=>{
+                player.angle = 0
+                player.setVelocity(0, 0);
+                player.setX(this.screenWidth/2);
+                player.setY(this.screenHeight/2);
+                player.setActive(true).setVisible(true)
+            }, 1000)
+        },null,this)
+
         this.physics.add.collider(this.asteroids, this.asteroids)
+        this.physics.add.collider(this.asteroidsm, this.asteroids)
+        this.physics.add.collider(this.asteroidsm, this.asteroidsm)
 
         this.physics.add.collider(this.asteroids, this.bullets, (asteroid,bullet)=>{
             asteroid.destroy()
@@ -167,9 +187,29 @@ addColliders()
             console.log(asteroid.y)
 
             this.score+=50
-            if (this.asteroids.getLength()==0) {
+            if (this.asteroids.getLength()==0 && this.asteroidsm.getLength()==0) {
                 setTimeout(() => {
                     this.asteroids.resetAsteroidGroup()
+                    this.asteroidsm.resetAsteroidGroup()
+                    this.asteroids.addAsteroids(this.screenWidth,this.screenHeight)
+                    this.addColliders()
+                    this.wave++
+                }, 1500);
+            }
+        },null,this)
+
+        this.physics.add.collider(this.asteroidsm, this.bullets, (asteroidm,bullet)=>{
+            asteroidm.destroy()
+            bullet.setActive(false);
+            bullet.setVisible(false);
+            bullet.body.enable = false
+            console.log(asteroidm.x)
+            console.log(asteroidm.y)
+            this.score+=25
+            if (this.asteroids.getLength()==0 && this.asteroidsm.getLength()==0) {
+                setTimeout(() => {
+                    this.asteroids.resetAsteroidGroup()
+                    this.asteroidsm.resetAsteroidGroup()
                     this.asteroids.addAsteroids(this.screenWidth,this.screenHeight)
                     this.addColliders()
                     this.wave++
@@ -229,8 +269,10 @@ updateKeys(time)
     //    if (this.space.isDown) //if no funciona como deberia chequear statement
        if(Phaser.Input.Keyboard.JustDown(this.space)) 
        {
+        this.laserSmall.play()
         this.bullets.fireBullet(this.player.x,this.player.y,this.player.rotation)
         this.bulletsFired ++
+
         // console.log(`this.bulletsFired: ${this.bulletsFired}`)
         // console.log(`bullets fired: ${this.bulletsFired}`)
         }
