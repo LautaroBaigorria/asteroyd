@@ -1,42 +1,3 @@
-//  TODO
-//  animaciones destruccion de nave y asteroides
-//  nuevos sprites para asteroides L, M, S y plato volador
-//  colisiones con asteroides > asteroides mas chicos (grande-mediano-chico)
-//  wraparound para bullets <---HECHO--->
-//  sonidos
-//  musica
-//  puntaje <---HECHO--->
-//  reseteo de la escena tras destruir todos los asteroides <---HECHO--->
-//  intervalo entre disparos <---HECHO--->
-//  plato volador aleatorio que dispara
-//  resetear player tras perder una vida con invulnerabilidad temporaria
-//  evento de gameover y reseteo de escena
-//  vectores aleatorios para los asteroides <---HECHO--->
-//  class Asteroid extend Phaser.Physics.Arcade.Sprite
-//  class AsteroidS extend Phaser.Physics.Arcade.Group
-//  disparo con problemas : consultar en internet <---HECHO--->
-//  multiples escenas (creditos, menu principal, juego, game over)
-//  el tama;o de ventana debe ser tama;o del dispositivo - 5px (window.innerHeight -5)
-//  separar el codigo en archivos <---HECHO--->
-//  version para escritorio  
-//  version para moviles 
-//  despliegue en un sitio web 
-
-//  resolver modelo de colision para asteroidM << IMPORTANTE >>
-//  1- crear grupo con los flags apagados y la cantidad total de asteroidsm(8)
-//  2- pasar como argumento (x, y) del asteoride destruido y key='asteroidm'
-//  3- setear true en todos sus flags
-//  4- fijar movimiento velocidad y rotacion aleatorios
-//  fire (x, y)
-// {
-//     this.body.reset(x, y);
-//     this.setActive(true);
-//     this.setVisible(true);
-//     
-// }
-// ver codigo completo en https://phaser.io/examples/v3/view/physics/arcade/bullets-group
-// agregar modelo de colision a los asteroidesm y un reseteo de grupo para que el spawn se vuelva a repetir en waves posteriores
-
 
 import {Asteroids} from './asteroids.js';
 import {AsteroidsM} from './asteroidsm.js';
@@ -103,6 +64,7 @@ update (time)
     this.physics.world.wrap(this.asteroids, 32);
     this.physics.world.wrap(this.asteroidsm, 32);
     this.asteroids.asteroidRotation()
+    this.asteroidsm.asteroidRotation()
 
 }
 
