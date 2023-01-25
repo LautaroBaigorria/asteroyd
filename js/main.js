@@ -1,6 +1,7 @@
 
 import {Asteroids} from './asteroids.js';
 import {AsteroidsM} from './asteroidsm.js';
+import { AsteroidsSmall } from './asteroidsSmall.js';
 import {Bullets} from './bullets.js';
 
 class Game extends Phaser.Scene
@@ -39,6 +40,7 @@ create ()
     this.add.image(this.screenWidth/2,this.screenHeight/2,'nightsky')
     this.asteroids = new Asteroids(this)
     this.asteroidsm = new AsteroidsM(this)
+    this.asteroidsSmall = new AsteroidsSmall(this)
     this.asteroids.addAsteroids(this.screenWidth,this.screenHeight)
     this.addPlayer()
     this.bullets = new Bullets(this);
@@ -63,8 +65,10 @@ update (time)
     this.physics.world.wrap(this.player, 32);
     this.physics.world.wrap(this.asteroids, 32);
     this.physics.world.wrap(this.asteroidsm, 32);
+    this.physics.world.wrap(this.asteroidsSmall, 32);
     this.asteroids.asteroidRotation()
     this.asteroidsm.asteroidRotation()
+    this.asteroidsSmall.asteroidRotation()
 
 }
 
@@ -76,6 +80,7 @@ loadImages()
     this.load.image('nightsky','assets/sky.png')
     this.load.image('asteroid','assets/asteroid.png')
     this.load.image('asteroid2','assets/asteroid2.png')
+    this.load.image('asteroid3','assets/asteroid3.png')
     this.load.image('bullet','assets/bullet.png')
     this.load.spritesheet('ship', 'assets/ship_animation2.png',{ frameWidth: 48, frameHeight: 48 })
     }
@@ -135,9 +140,27 @@ addColliders()
             }, 1000)
         },null,this)
 
+        this.physics.add.collider(this.player, this.asteroidsSmall, (player)=> {
+            player.setActive(false).setVisible(false)
+            this.lives -= 1
+            if (this.lives==0) {
+                this.gameOver = true
+            }
+            setTimeout(()=>{
+                player.angle = 0
+                player.setVelocity(0, 0);
+                player.setX(this.screenWidth/2);
+                player.setY(this.screenHeight/2);
+                player.setActive(true).setVisible(true)
+            }, 1000)
+        },null,this)
+
         this.physics.add.collider(this.asteroids, this.asteroids)
         this.physics.add.collider(this.asteroidsm, this.asteroids)
         this.physics.add.collider(this.asteroidsm, this.asteroidsm)
+        this.physics.add.collider(this.asteroidsSmall, this.asteroidsSmall)
+        this.physics.add.collider(this.asteroidsSmall, this.asteroidsm)
+        this.physics.add.collider(this.asteroidsSmall, this.asteroids)
 
         this.physics.add.collider(this.asteroids, this.bullets, (asteroid,bullet)=>{
             asteroid.destroy()
@@ -147,37 +170,37 @@ addColliders()
             bullet.body.enable = false
             console.log(asteroid.x)
             console.log(asteroid.y)
-
             this.score+=50
-            if (this.asteroids.getLength()==0 && this.asteroidsm.getLength()==0) {
-                setTimeout(() => {
-                    this.asteroids.resetAsteroidGroup()
-                    this.asteroidsm.resetAsteroidGroup()
-                    this.asteroids.addAsteroids(this.screenWidth,this.screenHeight)
-                    this.addColliders()
-                    this.wave++
-                }, 1500);
-            }
+            this.checkIfAllAsteroidsDestroyed()
         },null,this)
 
         this.physics.add.collider(this.asteroidsm, this.bullets, (asteroidm,bullet)=>{
             asteroidm.destroy()
+
+            // linea problematica, genera asteroidesSmall en la primera wave
+            this.asteroidsSmall.addAsteroids(asteroidm.x, asteroidm.y,4);
+            
+            
             bullet.setActive(false);
             bullet.setVisible(false);
             bullet.body.enable = false
             console.log(asteroidm.x)
             console.log(asteroidm.y)
             this.score+=25
-            if (this.asteroids.getLength()==0 && this.asteroidsm.getLength()==0) {
-                setTimeout(() => {
-                    this.asteroids.resetAsteroidGroup()
-                    this.asteroidsm.resetAsteroidGroup()
-                    this.asteroids.addAsteroids(this.screenWidth,this.screenHeight)
-                    this.addColliders()
-                    this.wave++
-                }, 1500);
-            }
-        },null,this)
+            this.checkIfAllAsteroidsDestroyed()
+            },null,this)
+
+        this.physics.add.collider(this.asteroidsSmall, this.bullets, (asteroidSmall,bullet)=>{
+            asteroidSmall.destroy()
+            bullet.setActive(false);
+            bullet.setVisible(false);
+            bullet.body.enable = false
+            console.log(asteroidSmall.x)
+            console.log(asteroidSmall.y)
+            this.score+=12.5
+            this.checkIfAllAsteroidsDestroyed()
+            },null,this)
+        
     }
 
 addTexts()
@@ -228,18 +251,14 @@ updateKeys(time)
         this.physics.velocityFromRotation(this.player.rotation-(0*Math.PI/180),100, this.player.body.acceleration)
        }
        
-    //    if (this.space.isDown) //if no funciona como deberia chequear statement
        if(Phaser.Input.Keyboard.JustDown(this.space)) 
        {
         this.laserSmall.play()
         this.bullets.fireBullet(this.player.x,this.player.y,this.player.rotation)
         this.bulletsFired ++
 
-        // console.log(`this.bulletsFired: ${this.bulletsFired}`)
-        // console.log(`bullets fired: ${this.bulletsFired}`)
         }
         
-        // if (this.shift.isDown)
         if(Phaser.Input.Keyboard.JustDown(this.shift)) 
         {
         this.warp()
@@ -253,7 +272,8 @@ updateTexts()
         this.text2.setText('Angle: ' + this.player.angle);
         this.text3.setText('this.player.rotation: ' + this.player.rotation);
         this.text4.setText('Lives: ' + this.lives);
-        this.text5.setText('Asteroids: ' + this.asteroids.getLength())
+        let totalAsteroids = this.asteroids.getLength() + this.asteroidsm.getLength() + this.asteroidsSmall.getLength()
+        this.text5.setText('Asteroids: ' + totalAsteroids )
         this.text6.setText('Bullets: ' + this.bullets.getLength())
         this.text7.setText('Score: ' + this.score)
         this.text8.setText('Wave: ' + this.wave)
@@ -281,7 +301,20 @@ addAnimations()
             repeat: 1
         });
 
-    }   
+    } 
+    
+checkIfAllAsteroidsDestroyed(){
+    if (this.asteroids.getLength()==0 && this.asteroidsm.getLength()==0 && this.asteroidsSmall.getLength()==0) {
+        setTimeout(() => {
+            this.asteroids.resetAsteroidGroup()
+            this.asteroidsm.resetAsteroidGroup()
+            this.asteroidsSmall.resetAsteroidGroup()
+            this.asteroids.addAsteroids(this.screenWidth,this.screenHeight)
+            this.addColliders()
+            this.wave++
+        }, 1500);
+    }
+}
 
 }
 
@@ -296,7 +329,6 @@ const config = {
             gravity:
             {y: 0}
         },
-        debug: true
     },
     scene: [Game]
 }
