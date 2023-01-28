@@ -62,10 +62,10 @@ update (time)
 
     this.updateKeys(time)
     this.updateTexts()
-    this.physics.world.wrap(this.player, 32);
-    this.physics.world.wrap(this.asteroids, 32);
-    this.physics.world.wrap(this.asteroidsm, 32);
-    this.physics.world.wrap(this.asteroidsSmall, 32);
+    this.physics.world.wrap(this.player, 16);
+    this.physics.world.wrap(this.asteroids, 16);
+    this.physics.world.wrap(this.asteroidsm, 16);
+    this.physics.world.wrap(this.asteroidsSmall, 16);
     this.asteroids.asteroidRotation()
     this.asteroidsm.asteroidRotation()
     this.asteroidsSmall.asteroidRotation()

@@ -12,6 +12,7 @@ export class AsteroidSmall extends Phaser.Physics.Arcade.Sprite
 
     spawn(x,y)
     {
+        this.body.enable = true;
         this.body.reset(x, y);
         this.setActive(true);
         this.setVisible(true);

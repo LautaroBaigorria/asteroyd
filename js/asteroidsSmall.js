@@ -3,7 +3,7 @@ export class AsteroidsSmall extends Phaser.Physics.Arcade.Group
 {
     constructor (scene)
     {
-        super(scene.physics.world, scene);
+        super(scene.physics.world, scene, { enable: false });
 
         this.createMultiple({
             frameQuantity: 32,
@@ -28,7 +28,6 @@ export class AsteroidsSmall extends Phaser.Physics.Arcade.Group
 
     addAsteroids(posX,posY,quantity)
     {
-        
         
         for (let i=quantity;  i >0  ; i--) 
         {
