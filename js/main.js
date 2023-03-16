@@ -30,7 +30,10 @@ preload ()
     this.loadImages()
     this.loadKeys()
     this.loadAudio()
-
+    this.load.spritesheet('explosion', 'assets/explosion-spritesheet.png', {
+        frameWidth: 64,
+        frameHeight: 64
+      });
 
 }
 
@@ -54,6 +57,7 @@ create ()
             loop: true
         });
 
+    
     
 }
 
@@ -96,7 +100,7 @@ loadKeys()
 
 loadAudio()
     {
-        this.load.audio('soundtrack','assets/1-Supercollider.mp3')
+        this.load.audio('soundtrack',['assets/estees.ogg','assets/estees.mp3'])
         this.load.audio('laserSmall', 'assets/laserSmall_002.ogg');
     }
 
@@ -164,6 +168,9 @@ addColliders()
 
         this.physics.add.collider(this.asteroids, this.bullets, (asteroid,bullet)=>{
             asteroid.destroy()
+            this.boom.setPosition(asteroid.x, asteroid.y);
+            this.boom.setVisible(true);
+            this.boom.play('explosion-start');
             this.asteroidsm.addAsteroids(asteroid.x, asteroid.y,2);
             bullet.setActive(false);
             bullet.setVisible(false);
@@ -176,11 +183,10 @@ addColliders()
 
         this.physics.add.collider(this.asteroidsm, this.bullets, (asteroidm,bullet)=>{
             asteroidm.destroy()
-
-            // linea problematica, genera asteroidesSmall en la primera wave
+            this.boom.setPosition(asteroidm.x, asteroidm.y);
+            this.boom.setVisible(true);
+            this.boom.play('explosion-start');
             this.asteroidsSmall.addAsteroids(asteroidm.x, asteroidm.y,4);
-            
-            
             bullet.setActive(false);
             bullet.setVisible(false);
             bullet.body.enable = false
@@ -192,6 +198,9 @@ addColliders()
 
         this.physics.add.collider(this.asteroidsSmall, this.bullets, (asteroidSmall,bullet)=>{
             asteroidSmall.destroy()
+            this.boom.setPosition(asteroidSmall.x, asteroidSmall.y);
+            this.boom.setVisible(true);
+            this.boom.play('explosion-start');
             bullet.setActive(false);
             bullet.setVisible(false);
             bullet.body.enable = false
@@ -300,6 +309,23 @@ addAnimations()
             frameRate: 8,
             repeat: 1
         });
+
+        this.boom = this.physics.add.sprite(100, 100, 'explosion');
+        this.boom.setScale(1);
+        this.boom.setVisible(false);
+        this.boom.on('animationcomplete', () => {
+        this.boom.setVisible(false);
+      })
+        
+        this.anims.create({
+            key: 'explosion-start',
+            frames: this.anims.generateFrameNumbers('explosion', {
+                start: 0,
+                end: 4
+            }),
+            repeat: 0,
+            frameRate: 16
+            });
 
     } 
     
