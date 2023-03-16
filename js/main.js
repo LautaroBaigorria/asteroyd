@@ -1,7 +1,7 @@
 
-import {Asteroids} from './asteroids.js';
-import {AsteroidsM} from './asteroidsm.js';
-import { AsteroidsSmall } from './asteroidsSmall.js';
+import { LargeAsteroidsGroup } from './largeAsteroidsGroup.js';
+import { MediumAsteroidsGroup } from './mediumAsteroidsGroup.js';
+import { SmallAsteroidsGroup } from './smallAsteroidsGroup.js';
 import {Bullets} from './bullets.js';
 
 class Game extends Phaser.Scene
@@ -20,7 +20,7 @@ class Game extends Phaser.Scene
         this.screenWidth = 1024
         this.screenHeight = 768 
         this.wave = 1
-        this.asteroids
+        this.largeAsteroidsGroup
 
 	}
 
@@ -41,10 +41,10 @@ create ()
 {
     
     this.add.image(this.screenWidth/2,this.screenHeight/2,'nightsky')
-    this.asteroids = new Asteroids(this)
-    this.asteroidsm = new AsteroidsM(this)
-    this.asteroidsSmall = new AsteroidsSmall(this)
-    this.asteroids.addAsteroids(this.screenWidth,this.screenHeight)
+    this.largeAsteroidsGroup = new LargeAsteroidsGroup(this)
+    this.mediumAsteroidsGroup = new MediumAsteroidsGroup(this)
+    this.smallAsteroidGroup = new SmallAsteroidsGroup(this)
+    this.largeAsteroidsGroup.addAsteroids(this.screenWidth,this.screenHeight)
     this.addPlayer()
     this.bullets = new Bullets(this);
     this.addColliders()
@@ -67,12 +67,12 @@ update (time)
     this.updateKeys(time)
     this.updateTexts()
     this.physics.world.wrap(this.player, 16);
-    this.physics.world.wrap(this.asteroids, 16);
-    this.physics.world.wrap(this.asteroidsm, 16);
-    this.physics.world.wrap(this.asteroidsSmall, 16);
-    this.asteroids.asteroidRotation()
-    this.asteroidsm.asteroidRotation()
-    this.asteroidsSmall.asteroidRotation()
+    this.physics.world.wrap(this.largeAsteroidsGroup, 16);
+    this.physics.world.wrap(this.mediumAsteroidsGroup, 16);
+    this.physics.world.wrap(this.smallAsteroidGroup, 16);
+    this.largeAsteroidsGroup.asteroidRotation()
+    this.mediumAsteroidsGroup.asteroidRotation()
+    this.smallAsteroidGroup.asteroidRotation()
 
 }
 
@@ -114,7 +114,7 @@ addPlayer()
 
 addColliders()
     {
-        this.physics.add.collider(this.player, this.asteroids, (player)=> {
+        this.physics.add.collider(this.player, this.largeAsteroidsGroup, (player)=> {
             player.setActive(false).setVisible(false)
             this.lives -= 1
             if (this.lives==0) {
@@ -129,7 +129,7 @@ addColliders()
             }, 1000)
         },null,this)
     
-        this.physics.add.collider(this.player, this.asteroidsm, (player)=> {
+        this.physics.add.collider(this.player, this.mediumAsteroidsGroup, (player)=> {
             player.setActive(false).setVisible(false)
             this.lives -= 1
             if (this.lives==0) {
@@ -144,7 +144,7 @@ addColliders()
             }, 1000)
         },null,this)
 
-        this.physics.add.collider(this.player, this.asteroidsSmall, (player)=> {
+        this.physics.add.collider(this.player, this.smallAsteroidGroup, (player)=> {
             player.setActive(false).setVisible(false)
             this.lives -= 1
             if (this.lives==0) {
@@ -159,19 +159,19 @@ addColliders()
             }, 1000)
         },null,this)
 
-        this.physics.add.collider(this.asteroids, this.asteroids)
-        this.physics.add.collider(this.asteroidsm, this.asteroids)
-        this.physics.add.collider(this.asteroidsm, this.asteroidsm)
-        this.physics.add.collider(this.asteroidsSmall, this.asteroidsSmall)
-        this.physics.add.collider(this.asteroidsSmall, this.asteroidsm)
-        this.physics.add.collider(this.asteroidsSmall, this.asteroids)
+        this.physics.add.collider(this.largeAsteroidsGroup, this.largeAsteroidsGroup)
+        this.physics.add.collider(this.mediumAsteroidsGroup, this.largeAsteroidsGroup)
+        this.physics.add.collider(this.mediumAsteroidsGroup, this.mediumAsteroidsGroup)
+        this.physics.add.collider(this.smallAsteroidGroup, this.smallAsteroidGroup)
+        this.physics.add.collider(this.smallAsteroidGroup, this.mediumAsteroidsGroup)
+        this.physics.add.collider(this.smallAsteroidGroup, this.largeAsteroidsGroup)
 
-        this.physics.add.collider(this.asteroids, this.bullets, (asteroid,bullet)=>{
+        this.physics.add.collider(this.largeAsteroidsGroup, this.bullets, (asteroid,bullet)=>{
             asteroid.destroy()
             this.boom.setPosition(asteroid.x, asteroid.y);
             this.boom.setVisible(true);
             this.boom.play('explosion-start');
-            this.asteroidsm.addAsteroids(asteroid.x, asteroid.y,2);
+            this.mediumAsteroidsGroup.addAsteroids(asteroid.x, asteroid.y,2);
             bullet.setActive(false);
             bullet.setVisible(false);
             bullet.body.enable = false
@@ -181,12 +181,12 @@ addColliders()
             this.checkIfAllAsteroidsDestroyed()
         },null,this)
 
-        this.physics.add.collider(this.asteroidsm, this.bullets, (asteroidm,bullet)=>{
+        this.physics.add.collider(this.mediumAsteroidsGroup, this.bullets, (asteroidm,bullet)=>{
             asteroidm.destroy()
             this.boom.setPosition(asteroidm.x, asteroidm.y);
             this.boom.setVisible(true);
             this.boom.play('explosion-start');
-            this.asteroidsSmall.addAsteroids(asteroidm.x, asteroidm.y,4);
+            this.smallAsteroidGroup.addAsteroids(asteroidm.x, asteroidm.y,4);
             bullet.setActive(false);
             bullet.setVisible(false);
             bullet.body.enable = false
@@ -196,7 +196,7 @@ addColliders()
             this.checkIfAllAsteroidsDestroyed()
             },null,this)
 
-        this.physics.add.collider(this.asteroidsSmall, this.bullets, (asteroidSmall,bullet)=>{
+        this.physics.add.collider(this.smallAsteroidGroup, this.bullets, (asteroidSmall,bullet)=>{
             asteroidSmall.destroy()
             this.boom.setPosition(asteroidSmall.x, asteroidSmall.y);
             this.boom.setVisible(true);
@@ -281,7 +281,7 @@ updateTexts()
         this.text2.setText('Angle: ' + this.player.angle);
         this.text3.setText('this.player.rotation: ' + this.player.rotation);
         this.text4.setText('Lives: ' + this.lives);
-        let totalAsteroids = this.asteroids.getLength() + this.asteroidsm.getLength() + this.asteroidsSmall.getLength()
+        let totalAsteroids = this.largeAsteroidsGroup.getLength() + this.mediumAsteroidsGroup.getLength() + this.smallAsteroidGroup.getLength()
         this.text5.setText('Asteroids: ' + totalAsteroids )
         this.text6.setText('Bullets: ' + this.bullets.getLength())
         this.text7.setText('Score: ' + this.score)
@@ -330,12 +330,12 @@ addAnimations()
     } 
     
 checkIfAllAsteroidsDestroyed(){
-    if (this.asteroids.getLength()==0 && this.asteroidsm.getLength()==0 && this.asteroidsSmall.getLength()==0) {
+    if (this.largeAsteroidsGroup.getLength()==0 && this.mediumAsteroidsGroup.getLength()==0 && this.smallAsteroidGroup.getLength()==0) {
         setTimeout(() => {
-            this.asteroids.resetAsteroidGroup()
-            this.asteroidsm.resetAsteroidGroup()
-            this.asteroidsSmall.resetAsteroidGroup()
-            this.asteroids.addAsteroids(this.screenWidth,this.screenHeight)
+            this.largeAsteroidsGroup.resetAsteroidGroup()
+            this.mediumAsteroidsGroup.resetAsteroidGroup()
+            this.smallAsteroidGroup.resetAsteroidGroup()
+            this.largeAsteroidsGroup.addAsteroids(this.screenWidth,this.screenHeight)
             this.addColliders()
             this.wave++
         }, 1500);
