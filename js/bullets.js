@@ -3,7 +3,7 @@ export class Bullets extends Phaser.Physics.Arcade.Group
 {
     constructor (scene)
     {
-        super(scene.physics.world, scene);
+        super(scene.physics.world, scene, { enable: false });
 
         this.createMultiple({
             frameQuantity: 10,

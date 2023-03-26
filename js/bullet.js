@@ -3,6 +3,8 @@ export class Bullet extends Phaser.Physics.Arcade.Sprite
     constructor (scene, x, y)
     {
         super(scene, x, y, 'bullet');
+        this.x = 1024/2
+        this.y = 768/2
     }
 
     fire (x, y, rotation)

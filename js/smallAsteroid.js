@@ -7,7 +7,7 @@ export class SmallAsteroid extends Phaser.Physics.Arcade.Sprite
         this.setActive(false);
         this.setVisible(false);
         this.x = 0
-        this.y = 0
+        this.y = 200
     }
 
     spawn(x,y)
