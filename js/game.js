@@ -50,12 +50,12 @@ create ()
     this.bullets = new Bullets(this);
     this.addColliders()
     this.addAnimations()
-    // let soundtrack = this.sound.add('soundtrack');
+    this.soundtrack = this.sound.add('soundtrack');
     this.laserSmall = this.sound.add('laserSmall')
 
-        // soundtrack.play({
-        //     loop: true
-        // });
+        this.soundtrack.play({
+            loop: true
+        });
     // this.scene.start('Interface', {bodySpeed: this.player.body.speed});
     
     
@@ -306,8 +306,10 @@ colliderBetweenPlayerandAsteroidsGroup(player){
         if (this.lives<=0) {
             this.gameOver = true
             
-            this.scene.pause('Game')
             this.scene.start('GameOver',{score: this.score,wave: this.wave})
+            this.soundtrack.stop()
+            this.scene.stop()
+
         }
         setTimeout(()=>{
             player.angle = 0
